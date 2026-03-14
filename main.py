@@ -30,8 +30,8 @@ def on_send_click():
     status_label.config(text="Seleccione los archivos a enviar")
 
     # extra functionality
-    select_files_button.pack(padx=5, pady=(5, 0))
     extra_buttons_frame.pack()
+    select_files_button.pack(padx=5, pady=(5, 0))
 
 def on_receive_click():
     # style
@@ -60,7 +60,7 @@ def select_files():
     if files:
         status_label.config(text="Archivos seleccionados:\n" + " / ".join(os.path.basename(f) for f in files))
         select_files_button.pack_forget()
-        cancel_button.pack(padx=5, pady=(5, 0))
+        cancel_button.pack(padx=5, pady=(5, 0), side="left")
 
 def cancel_selection():
     status_label.config(text="Seleccione los archivos a enviar")
