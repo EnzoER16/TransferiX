@@ -49,6 +49,8 @@ def on_receive_click():
     # extra functionality
     select_files_button.pack_forget()
     cancel_button.pack_forget()
+    text_input.pack_forget()
+
     extra_buttons_frame.pack_forget()
 
 def select_files():
@@ -62,10 +64,16 @@ def select_files():
         select_files_button.pack_forget()
         cancel_button.pack(padx=5, pady=(5, 0), side="left")
 
+        text_input.pack(padx=5, side="left")
+        text_input.focus_set()
+
 def cancel_selection():
     status_label.config(text="Seleccione los archivos a enviar")
     cancel_button.pack_forget()
     select_files_button.pack(padx=5, pady=(5, 0))
+    
+    text_input.delete(0, tk.END)
+    text_input.pack_forget() 
 
 # window configuration
 window = tk.Tk()
@@ -93,6 +101,8 @@ extra_buttons_frame.pack()
 
 select_files_button = tk.Button(extra_buttons_frame, text="Seleccionar archivos", command=select_files)
 cancel_button = tk.Button(extra_buttons_frame, text="Cancelar seleccion", command=cancel_selection)
+
+text_input = tk.Entry(extra_buttons_frame)
 
 # buttons frame
 buttons_frame = tk.Frame(window)
