@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as tk, os
 from tkinter import filedialog
 from utils import get_ip
 
@@ -47,8 +47,14 @@ def on_receive_click():
     select_files_button.pack_forget()
 
 def select_files():
+    # open file dialog
     global files
     files = filedialog.askopenfilenames(title="Seleccionar archivos", multiple=True)
+
+    # ui update
+    if files:
+        status_label.config(text="Archivos seleccionados:\n" + " / ".join(os.path.basename(f) for f in files))
+        select_files_button.pack_forget()
 
 # window configuration
 window = tk.Tk()
