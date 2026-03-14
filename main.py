@@ -26,6 +26,8 @@ def on_send_click():
     ip_frame.pack_forget()
     status_label.config(text="Seleccione los archivos a enviar")
 
+    select_files_button.pack(padx=5, pady=(5, 0))
+
 def on_receive_click():
     # style
     send_button.config(relief="raised")
@@ -38,6 +40,8 @@ def on_receive_click():
     status_label.pack()
     content_frame.pack_forget()
     content_frame.pack(fill="both", expand=True, padx=5)
+
+    select_files_button.pack_forget()
 
 # window configuration
 window = tk.Tk()
@@ -58,6 +62,8 @@ content_frame.pack(fill="both", expand=True, padx=5)
 
 status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white", wraplength=490)
 status_label.pack()
+
+select_files_button = tk.Button(window, text="Seleccionar archivos")
 
 # buttons frame
 buttons_frame = tk.Frame(window)
