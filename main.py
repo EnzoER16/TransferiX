@@ -13,6 +13,9 @@ ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
 my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 my_ip.pack(pady=2)
 
+content_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
+content_frame.pack(fill="both", expand=True, padx=5)
+
 buttons_frame = tk.Frame(window)
 buttons_frame.pack(side="bottom", fill="x")
 
