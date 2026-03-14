@@ -17,9 +17,20 @@ def on_send_click():
     send_button.config(relief="sunken")
     receive_button.config(relief="raised")
 
+    my_ip.pack_forget()
+    ip_frame.pack_forget()
+    status_label.config(text="Seleccione los archivos a enviar")
+
 def on_receive_click():
     send_button.config(relief="raised")
     receive_button.config(relief="sunken")
+
+    ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
+    my_ip.pack()
+    status_label.config(text="Esperando archivos...")
+    status_label.pack()
+    content_frame.pack_forget()
+    content_frame.pack(fill="both", expand=True, padx=5)
 
 window = tk.Tk()
 window.title("TransferiX")
