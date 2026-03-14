@@ -1,6 +1,6 @@
 import tkinter as tk, os
 from tkinter import filedialog
-from utils import get_ip
+from utils import get_ip, start_sending_files, start_receiving_files
 
 WINDOW_WIDTH = 500
 WINDOW_HEIGHT = 300
@@ -79,6 +79,12 @@ def cancel_selection():
     text_input.pack_forget() 
     confirm_send_button.pack_forget()
 
+def to_send_files():
+    send_ip = text_input.get()
+    paths = files
+
+    start_sending_files(send_ip, paths)
+
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
@@ -107,7 +113,7 @@ select_files_button = tk.Button(extra_buttons_frame, text="Seleccionar archivos"
 cancel_button = tk.Button(extra_buttons_frame, text="Cancelar seleccion", command=cancel_selection)
 
 text_input = tk.Entry(extra_buttons_frame)
-confirm_send_button = tk.Button(extra_buttons_frame, text="Enviar archivos")
+confirm_send_button = tk.Button(extra_buttons_frame, text="Enviar archivos", command=to_send_files)
 
 # buttons frame
 buttons_frame = tk.Frame(window)
@@ -120,5 +126,7 @@ send_button = tk.Button(buttons_frame, text="Enviar archivos", command=lambda: o
 send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
+
+start_receiving_files()
 
 window.mainloop()
