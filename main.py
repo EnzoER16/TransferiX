@@ -46,6 +46,8 @@ def on_receive_click():
 
     select_files_button.pack_forget()
 
+    cancel_button.pack_forget()
+
 def select_files():
     # open file dialog
     global files
@@ -55,6 +57,7 @@ def select_files():
     if files:
         status_label.config(text="Archivos seleccionados:\n" + " / ".join(os.path.basename(f) for f in files))
         select_files_button.pack_forget()
+        cancel_button.pack(padx=5, pady=(5, 0))
 
 # window configuration
 window = tk.Tk()
@@ -77,6 +80,7 @@ status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white",
 status_label.pack()
 
 select_files_button = tk.Button(window, text="Seleccionar archivos", command=select_files)
+cancel_button = tk.Button(window, text="Cancelar seleccion")
 
 # buttons frame
 buttons_frame = tk.Frame(window)
