@@ -16,6 +16,9 @@ my_ip.pack(pady=2)
 content_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
 content_frame.pack(fill="both", expand=True, padx=5)
 
+status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white", wraplength=490)
+status_label.pack()
+
 buttons_frame = tk.Frame(window)
 buttons_frame.pack(side="bottom", fill="x")
 
