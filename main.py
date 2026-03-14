@@ -1,8 +1,11 @@
 import tkinter as tk
+from tkinter import filedialog
 from utils import get_ip
 
 window_width = 500
 window_height = 300
+
+files = []
 
 def center_window(window_width, window_height):
     # get screen size
@@ -43,6 +46,10 @@ def on_receive_click():
 
     select_files_button.pack_forget()
 
+def select_files():
+    global files
+    files = filedialog.askopenfilenames(title="Seleccionar archivos", multiple=True)
+
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
@@ -63,7 +70,7 @@ content_frame.pack(fill="both", expand=True, padx=5)
 status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white", wraplength=490)
 status_label.pack()
 
-select_files_button = tk.Button(window, text="Seleccionar archivos")
+select_files_button = tk.Button(window, text="Seleccionar archivos", command=select_files)
 
 # buttons frame
 buttons_frame = tk.Frame(window)
