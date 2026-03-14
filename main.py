@@ -59,6 +59,11 @@ def select_files():
         select_files_button.pack_forget()
         cancel_button.pack(padx=5, pady=(5, 0))
 
+def cancel_selection():
+    status_label.config(text="Seleccione los archivos a enviar")
+    cancel_button.pack_forget()
+    select_files_button.pack(padx=5, pady=(5, 0))
+
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
@@ -80,7 +85,7 @@ status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white",
 status_label.pack()
 
 select_files_button = tk.Button(window, text="Seleccionar archivos", command=select_files)
-cancel_button = tk.Button(window, text="Cancelar seleccion")
+cancel_button = tk.Button(window, text="Cancelar seleccion", command=cancel_selection)
 
 # buttons frame
 buttons_frame = tk.Frame(window)
