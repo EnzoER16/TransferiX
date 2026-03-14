@@ -17,9 +17,9 @@ buttons_frame = tk.Frame(window)
 buttons_frame.pack(side="bottom", fill="x")
 
 receive_button = tk.Button(buttons_frame, text="Recibir archivos")
-receive_button.pack()
+receive_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 send_button = tk.Button(buttons_frame, text="Enviar archivos")
-send_button.pack()
+send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 window.mainloop()
