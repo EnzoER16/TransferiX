@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from utils import get_ip
 
-window_width = 500
-window_height = 300
+WINDOW_WIDTH = 500
+WINDOW_HEIGHT = 300
 
 files = []
 
@@ -82,6 +82,6 @@ receive_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 send_button = tk.Button(buttons_frame, text="Enviar archivos", command=lambda: on_send_click())
 send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
-center_window(window_width, window_height)
+center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
 window.mainloop()
