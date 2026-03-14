@@ -13,10 +13,13 @@ ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
 my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 my_ip.pack(pady=2)
 
-receive_button = tk.Button(window, text="Recibir archivos")
+buttons_frame = tk.Frame(window)
+buttons_frame.pack(side="bottom", fill="x")
+
+receive_button = tk.Button(buttons_frame, text="Recibir archivos")
 receive_button.pack()
 
-send_button = tk.Button(window, text="Enviar archivos")
+send_button = tk.Button(buttons_frame, text="Enviar archivos")
 send_button.pack()
 
 window.mainloop()
