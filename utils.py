@@ -34,3 +34,31 @@ def send_files(device_ip, file_paths):
                 client.sendall(chunk)
 
     client.close()
+
+def start_receiving_files():
+    threading.Thread(target=receive_files, daemon=True).start()
+
+def receive_files():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("0.0.0.0", TRANSFER_PORT))
+    server.listen(1)
+
+    connection, address = server.accept()
+    num_files = struct.unpack("!I", connection.recv(4))[0]
+
+    for _ in range(num_files):
+        name_len = struct.unpack("!I", connection.recv(4))[0]
+        file_name = connection.recv(name_len).decode()
+        file_size = struct.unpack("!Q", connection.recv(8))[0]
+
+        with open(file_name, "wb") as f:
+            received = 0
+            while received < file_size:
+                data = connection.recv(min(BUFFER_SIZE, file_size - received))
+                if not data:
+                    break
+                f.write(data)
+                received += len(data)
+
+    connection.close()
+    server.close()
