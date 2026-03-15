@@ -6,6 +6,7 @@ WINDOW_WIDTH = 500
 WINDOW_HEIGHT = 300
 
 files = []
+language = "es"
 
 def center_window(window_width, window_height):
     # get screen size
@@ -27,7 +28,10 @@ def on_send_click():
     # functionality
     my_ip.pack_forget()
     ip_frame.pack_forget()
-    status_label.config(text="Seleccione los archivos a enviar")
+    if language == "es":
+        status_label.config(text="Seleccione los archivos a enviar")
+    else:
+        status_label.config(text="Select files to send")
 
     # extra functionality
     extra_buttons_frame.pack()
@@ -41,7 +45,10 @@ def on_receive_click():
     # functionality
     ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
     my_ip.pack()
-    status_label.config(text="Esperando archivos...")
+    if language == "es":
+        status_label.config(text="Esperando archivos...")
+    else:
+        status_label.config(text="Waiting for files")
     status_label.pack()
     content_frame.pack_forget()
     content_frame.pack(fill="both", expand=True, padx=5)
@@ -63,7 +70,10 @@ def select_files():
 
     # ui update
     if files:
-        status_label.config(text="Archivos seleccionados:\n" + " / ".join(os.path.basename(f) for f in files))
+        if language == "es":
+            status_label.config(text="Archivos seleccionados:\n" + " / ".join(os.path.basename(f) for f in files))
+        else:
+            status_label.config(text="Files selected:\n" + " / ".join(os.path.basename(f) for f in files))
         select_files_button.pack_forget()
         cancel_button.pack(padx=5, pady=(5, 0), side="left")
 
@@ -72,7 +82,10 @@ def select_files():
         confirm_send_button.pack(padx=5, side="left")
 
 def cancel_selection():
-    status_label.config(text="Seleccione los archivos a enviar")
+    if language == "es":
+        status_label.config(text="Seleccione los archivos a enviar")
+    else:
+        status_label.config(text="Select files to send")
     cancel_button.pack_forget()
     select_files_button.pack(padx=5, pady=(5, 0))
 
@@ -86,7 +99,36 @@ def to_send_files():
     send_ip = text_input.get()
     paths = files
 
-    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button)
+    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language)
+
+def update_texts():
+    if language == "es":
+        status_label.config(text="Esperando archivos...")
+        send_button.config(text="Enviar archivos")
+        receive_button.config(text="Recibir archivos")
+        select_files_button.config(text="Seleccionar archivos")
+        cancel_button.config(text="Cancelar seleccion")
+        confirm_send_button.config(text="Enviar archivos")
+        accept_send_button.config(text="Aceptar")
+        accept_receive_button.config(text="Aceptar")
+
+    elif language == "en":
+        status_label.config(text="Waiting for files")
+        send_button.config(text="Send files")
+        receive_button.config(text="Receive files")
+        select_files_button.config(text="Select files")
+        cancel_button.config(text="Cancel selection")
+        confirm_send_button.config(text="Send files")
+        accept_send_button.config(text="Accept")
+        accept_receive_button.config(text="Accept")
+
+def change_language():
+    global language
+    if language == "es":
+        language = "en"
+    else:
+        language = "es"
+    update_texts()
 
 # window configuration
 window = tk.Tk()
@@ -102,7 +144,7 @@ my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 my_ip.pack(pady=2)
 
 language_button_image = tk.PhotoImage(file="language.png")
-language_button = tk.Button(ip_frame, image=language_button_image)
+language_button = tk.Button(ip_frame, image=language_button_image, command=change_language)
 language_button.place(x=459, y=2)
 
 # content frame
@@ -137,6 +179,6 @@ send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-start_receiving_files(status_label, accept_receive_button)
+start_receiving_files(status_label, accept_receive_button, language)
 
 window.mainloop()

@@ -13,10 +13,10 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else "Desconocido"
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
@@ -36,16 +36,19 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     client.close()
 
     # ui changes
-    status_label.config(text="Archivo/s enviado/s")
+    if language == "es":
+        status_label.config(text="Archivo/s enviado/s")
+    else:
+        status_label.config(text="File/s sended")
     cancel_button.pack_forget()
     text_input.pack_forget()
     confirm_send_button.pack_forget()
     accept_send_button.pack(padx=5, pady=(5, 0), side="left")
 
-def start_receiving_files(status_label, accept_receive_button):
-    threading.Thread(target=receive_files, daemon=True, args=(status_label, accept_receive_button)).start()
+def start_receiving_files(status_label, accept_receive_button, language):
+    threading.Thread(target=receive_files, daemon=True, args=(status_label, accept_receive_button, language)).start()
 
-def receive_files(status_label, accept_receive_button):
+def receive_files(status_label, accept_receive_button, language):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(("0.0.0.0", TRANSFER_PORT))
     server.listen(1)
@@ -71,5 +74,8 @@ def receive_files(status_label, accept_receive_button):
     server.close()
 
     # ui changes
-    status_label.config(text="Archivo/s recibido/s")
+    if language == "es":
+        status_label.config(text="Archivo/s recibido/s")
+    else:
+        status_label.config(text="File/s received")
     accept_receive_button.pack(padx=5, pady=(5, 0), side="left")
