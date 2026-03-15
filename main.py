@@ -145,7 +145,7 @@ my_ip.pack(pady=2)
 
 language_button_image = tk.PhotoImage(file="language.png")
 language_button = tk.Button(ip_frame, image=language_button_image, command=change_language)
-language_button.place(x=459, y=2)
+language_button.place(relx=1.0, x=-3, y=2, anchor="ne")
 
 # content frame
 content_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
