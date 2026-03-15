@@ -13,3 +13,7 @@ Transferix is a file transfer application built using Python and Tkinter. It all
 > [!NOTE]
 > **Current Availability:**
 > This tool is currently available for **Windows** only.
+
+## Languages supported
+- English
+- Spanish
