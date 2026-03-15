@@ -13,10 +13,10 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else "Desconocido"
     
-def start_sending_files(device_ip, file_paths, status_label):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button)).start()
 
-def send_files(device_ip, file_paths, status_label):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
@@ -35,7 +35,11 @@ def send_files(device_ip, file_paths, status_label):
 
     client.close()
 
+    # ui changes
     status_label.config(text="Archivo/s enviado/s")
+    cancel_button.pack_forget()
+    text_input.pack_forget()
+    confirm_send_button.pack_forget()
 
 def start_receiving_files(status_label):
     threading.Thread(target=receive_files, daemon=True, args=(status_label,)).start()
@@ -65,4 +69,5 @@ def receive_files(status_label):
     connection.close()
     server.close()
 
+    # ui changes
     status_label.config(text="Archivo/s recibido/s")
