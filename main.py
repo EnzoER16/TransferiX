@@ -133,7 +133,7 @@ def change_language():
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
-window.iconphoto(True, tk.PhotoImage(file="icon.png"))
+window.iconphoto(True, tk.PhotoImage(file="assets/icon.png"))
 window.resizable(False, False)
 
 # ip frame
@@ -143,7 +143,7 @@ ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
 my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 my_ip.pack(pady=2)
 
-language_button_image = tk.PhotoImage(file="language.png")
+language_button_image = tk.PhotoImage(file="assets/language.png")
 language_button = tk.Button(ip_frame, image=language_button_image, command=change_language)
 language_button.place(relx=1.0, x=-3, y=2, anchor="ne")
 
