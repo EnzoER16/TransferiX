@@ -101,6 +101,10 @@ ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
 my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 my_ip.pack(pady=2)
 
+language_button_image = tk.PhotoImage(file="language.png")
+language_button = tk.Button(ip_frame, image=language_button_image)
+language_button.place(x=459, y=2)
+
 # content frame
 content_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
 content_frame.pack(fill="both", expand=True, padx=5)
