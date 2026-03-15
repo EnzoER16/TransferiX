@@ -52,6 +52,7 @@ def on_receive_click():
 
     text_input.pack_forget()
     confirm_send_button.pack_forget()
+    accept_receive_button.pack_forget()
 
     extra_buttons_frame.pack_forget()
 
@@ -79,11 +80,13 @@ def cancel_selection():
     text_input.pack_forget() 
     confirm_send_button.pack_forget()
 
+    accept_send_button.pack_forget()
+
 def to_send_files():
     send_ip = text_input.get()
     paths = files
 
-    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button)
+    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button)
 
 # window configuration
 window = tk.Tk()
@@ -115,6 +118,9 @@ cancel_button = tk.Button(extra_buttons_frame, text="Cancelar seleccion", comman
 text_input = tk.Entry(extra_buttons_frame)
 confirm_send_button = tk.Button(extra_buttons_frame, text="Enviar archivos", command=to_send_files)
 
+accept_send_button = tk.Button(extra_buttons_frame, text="Aceptar", command=cancel_selection)
+accept_receive_button = tk.Button(extra_buttons_frame, text="Aceptar", command=on_receive_click)
+
 # buttons frame
 buttons_frame = tk.Frame(window)
 buttons_frame.pack(side="bottom", fill="x")
@@ -127,6 +133,6 @@ send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-start_receiving_files(status_label)
+start_receiving_files(status_label, accept_receive_button)
 
 window.mainloop()
