@@ -83,7 +83,7 @@ def to_send_files():
     send_ip = text_input.get()
     paths = files
 
-    start_sending_files(send_ip, paths)
+    start_sending_files(send_ip, paths, status_label)
 
 # window configuration
 window = tk.Tk()
@@ -127,6 +127,6 @@ send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-start_receiving_files()
+start_receiving_files(status_label)
 
 window.mainloop()
