@@ -59,6 +59,7 @@ def on_receive_click():
 
     text_input.pack_forget()
     confirm_send_button.pack_forget()
+    accept_send_button.pack_forget()
     accept_receive_button.pack_forget()
 
     extra_buttons_frame.pack_forget()
