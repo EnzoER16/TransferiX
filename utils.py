@@ -13,14 +13,16 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else "Desconocido"
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
 
+    status_label.pack_forget()
+    current_file_label.pack(pady=5)
     file_progress.pack(pady=5)
 
     for file_path in file_paths:
@@ -31,6 +33,11 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
         client.sendall(struct.pack("!I", len(file_name)))
         client.sendall(file_name)
         client.sendall(struct.pack("!Q", file_size))
+
+        if language == "es":
+            current_file_label.config(text=f"Enviando {file_name.decode()}")
+        else:
+            current_file_label.config(text=f"Sending {file_name.decode()}")
 
         with open(file_path, "rb") as f:
             while chunk := f.read(BUFFER_SIZE):
@@ -45,6 +52,8 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     client.close()
 
     # ui changes
+    current_file_label.pack_forget()
+    status_label.pack()
     if language == "es":
         status_label.config(text="Archivo/s enviado/s")
     else:
