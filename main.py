@@ -1,5 +1,5 @@
 import tkinter as tk, os
-from tkinter import filedialog
+from tkinter import filedialog, ttk
 from utils import get_ip, start_sending_files, start_receiving_files
 
 WINDOW_WIDTH = 500
@@ -100,7 +100,7 @@ def to_send_files():
     send_ip = text_input.get()
     paths = files
 
-    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language)
+    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress)
 
 def update_texts():
     if language == "es":
@@ -154,6 +154,8 @@ content_frame.pack(fill="both", expand=True, padx=5)
 
 status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white", wraplength=490)
 status_label.pack()
+
+file_progress = ttk.Progressbar(content_frame, maximum=100, length=460)
 
 # extra buttons frame
 extra_buttons_frame = tk.Frame(window)

@@ -13,17 +13,20 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else "Desconocido"
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
 
+    file_progress.pack(pady=5)
+
     for file_path in file_paths:
         file_name = os.path.basename(file_path).encode()
         file_size = os.path.getsize(file_path)
+        sent = 0
 
         client.sendall(struct.pack("!I", len(file_name)))
         client.sendall(file_name)
@@ -32,6 +35,12 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
         with open(file_path, "rb") as f:
             while chunk := f.read(BUFFER_SIZE):
                 client.sendall(chunk)
+                chunk_size = len(chunk)
+                sent += chunk_size
+
+                # file progress
+                file_percent = (sent / file_size) * 100
+                file_progress.after(0, file_progress.config, {"value": file_percent})
 
     client.close()
 
@@ -40,6 +49,7 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
         status_label.config(text="Archivo/s enviado/s")
     else:
         status_label.config(text="File/s sended")
+    file_progress.pack_forget()
     cancel_button.pack_forget()
     text_input.pack_forget()
     confirm_send_button.pack_forget()
