@@ -1,0 +1,30 @@
+{
+    "en": {
+        "receive_button": "Receive files",
+        "send_button": "Send files",
+        "waiting_files": "Waiting for files",
+        "select_files": "Select files",
+        "cancel_button": "Cancel selection",
+        "accept": "Accept",
+        "sending_file": "Sending",
+        "select_to_send": "Select files to send",
+        "files_selected": "Files selected",
+        "sent": "Files sent",
+        "received": "Files received",
+        "unknown": "Unknown"
+    },
+    "es": {
+        "receive_button": "Recibir archivos",
+        "send_button": "Enviar archivos",
+        "waiting_files": "Esperando archivos",
+        "select_files": "Seleccionar archivos",
+        "cancel_button": "Cancelar selección",
+        "accept": "Aceptar",
+        "sending_file": "Enviando",
+        "select_to_send": "Selecciona los archivos a enviar",
+        "files_selected": "Archivos seleccionados",
+        "sent": "Archivos enviados",
+        "received": "Archivos recibidos",
+        "unknown": "Desconocido"
+    }
+}

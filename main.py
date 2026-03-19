@@ -1,4 +1,5 @@
 import tkinter as tk, os
+import translation
 from tkinter import filedialog, ttk
 from utils import get_ip, start_sending_files, start_receiving_files
 
@@ -6,7 +7,6 @@ WINDOW_WIDTH = 500
 WINDOW_HEIGHT = 300
 
 files = []
-language = "es"
 
 def center_window(window_width, window_height):
     # get screen size
@@ -28,10 +28,7 @@ def on_send_click():
     # functionality
     my_ip.pack_forget()
     ip_frame.pack_forget()
-    if language == "es":
-        status_label.config(text="Seleccione los archivos a enviar")
-    else:
-        status_label.config(text="Select files to send")
+    status_label.config(text=translation.translate("select_to_send"))
 
     # extra functionality
     extra_buttons_frame.pack()
@@ -45,10 +42,7 @@ def on_receive_click():
     # functionality
     ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
     my_ip.pack()
-    if language == "es":
-        status_label.config(text="Esperando archivos...")
-    else:
-        status_label.config(text="Waiting for files")
+    status_label.config(text=translation.translate("waiting_files"))
     status_label.pack()
     content_frame.pack_forget()
     content_frame.pack(fill="both", expand=True, padx=5)
@@ -67,14 +61,11 @@ def on_receive_click():
 def select_files():
     # open file dialog
     global files
-    files = filedialog.askopenfilenames(title="Seleccionar archivos", multiple=True)
+    files = filedialog.askopenfilenames(title=translation.translate("select_files"), multiple=True)
 
     # ui update
     if files:
-        if language == "es":
-            status_label.config(text="Archivos seleccionados:\n" + " / ".join(os.path.basename(f) for f in files))
-        else:
-            status_label.config(text="Files selected:\n" + " / ".join(os.path.basename(f) for f in files))
+        status_label.config(text=translation.translate("files_selected") + ":\n" + " / ".join(os.path.basename(f) for f in files))
         select_files_button.pack_forget()
         cancel_button.pack(padx=5, pady=(5, 0), side="left")
 
@@ -83,10 +74,7 @@ def select_files():
         confirm_send_button.pack(padx=5, side="left")
 
 def cancel_selection():
-    if language == "es":
-        status_label.config(text="Seleccione los archivos a enviar")
-    else:
-        status_label.config(text="Select files to send")
+    status_label.config(text=translation.translate("select_to_send"))
     cancel_button.pack_forget()
     select_files_button.pack(padx=5, pady=(5, 0))
 
@@ -100,36 +88,12 @@ def to_send_files():
     send_ip = text_input.get()
     paths = files
 
-    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label)
+    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label)
 
-def update_texts():
-    if language == "es":
-        status_label.config(text="Esperando archivos...")
-        send_button.config(text="Enviar archivos")
-        receive_button.config(text="Recibir archivos")
-        select_files_button.config(text="Seleccionar archivos")
-        cancel_button.config(text="Cancelar seleccion")
-        confirm_send_button.config(text="Enviar archivos")
-        accept_send_button.config(text="Aceptar")
-        accept_receive_button.config(text="Aceptar")
-
-    elif language == "en":
-        status_label.config(text="Waiting for files")
-        send_button.config(text="Send files")
-        receive_button.config(text="Receive files")
-        select_files_button.config(text="Select files")
-        cancel_button.config(text="Cancel selection")
-        confirm_send_button.config(text="Send files")
-        accept_send_button.config(text="Accept")
-        accept_receive_button.config(text="Accept")
-
-def change_language():
-    global language
-    if language == "es":
-        language = "en"
-    else:
-        language = "es"
-    update_texts()
+def switch_lang():
+    new_lang = "es" if translation.LANGUAGE == "en" else "en"
+    translation.set_language(new_lang)
+    translation.refresh_ui()
 
 # window configuration
 window = tk.Tk()
@@ -145,44 +109,55 @@ my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 my_ip.pack(pady=2)
 
 language_button_image = tk.PhotoImage(file="assets/language.png")
-language_button = tk.Button(ip_frame, image=language_button_image, command=change_language)
+language_button = tk.Button(ip_frame, image=language_button_image, command=switch_lang)
 language_button.place(relx=1.0, x=-3, y=2, anchor="ne")
 
 # content frame
 content_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
 content_frame.pack(fill="both", expand=True, padx=5)
 
-status_label = tk.Label(content_frame, text="Esperando archivos...", bg="white", wraplength=490)
+status_label = tk.Label(content_frame, text=translation.translate("waiting_files"), bg="white", wraplength=490)
 status_label.pack()
 
-current_file_label = tk.Label(content_frame, text="", bg="white", wraplength=490)
+current_file_label = tk.Label(content_frame, text=translation.translate("sending_file"), bg="white", wraplength=490)
 file_progress = ttk.Progressbar(content_frame, maximum=100, length=460)
 
 # extra buttons frame
 extra_buttons_frame = tk.Frame(window)
 extra_buttons_frame.pack()
 
-select_files_button = tk.Button(extra_buttons_frame, text="Seleccionar archivos", command=select_files)
-cancel_button = tk.Button(extra_buttons_frame, text="Cancelar seleccion", command=cancel_selection)
+select_files_button = tk.Button(extra_buttons_frame, text=translation.translate("select_files"), command=select_files)
+cancel_button = tk.Button(extra_buttons_frame, text=translation.translate("cancel_button"), command=cancel_selection)
 
 text_input = tk.Entry(extra_buttons_frame)
-confirm_send_button = tk.Button(extra_buttons_frame, text="Enviar archivos", command=to_send_files)
+confirm_send_button = tk.Button(extra_buttons_frame, text=translation.translate("send_button"), command=to_send_files)
 
-accept_send_button = tk.Button(extra_buttons_frame, text="Aceptar", command=cancel_selection)
-accept_receive_button = tk.Button(extra_buttons_frame, text="Aceptar", command=on_receive_click)
+accept_send_button = tk.Button(extra_buttons_frame, text=translation.translate("accept"), command=cancel_selection)
+accept_receive_button = tk.Button(extra_buttons_frame, text=translation.translate("accept"), command=on_receive_click)
 
 # buttons frame
 buttons_frame = tk.Frame(window)
 buttons_frame.pack(side="bottom", fill="x")
 
-receive_button = tk.Button(buttons_frame, text="Recibir archivos", relief="sunken", command=lambda: on_receive_click())
+receive_button = tk.Button(buttons_frame, text=translation.translate("receive_button"), relief="sunken", command=lambda: on_receive_click())
 receive_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
-send_button = tk.Button(buttons_frame, text="Enviar archivos", command=lambda: on_send_click())
+send_button = tk.Button(buttons_frame, text=translation.translate("send_button"), command=lambda: on_send_click())
 send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
+
+translation.register_widget(receive_button, "receive_button")
+translation.register_widget(send_button, "send_button")
+translation.register_widget(my_ip, "unknown")
+translation.register_widget(status_label, "waiting_files")
+translation.register_widget(select_files_button, "select_files")
+translation.register_widget(cancel_button, "cancel_button")
+translation.register_widget(confirm_send_button, "send_button")
+translation.register_widget(accept_send_button, "accept")
+translation.register_widget(accept_receive_button, "accept")
+translation.register_widget(current_file_label, "sending_file")
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-start_receiving_files(status_label, accept_receive_button, language)
+start_receiving_files(status_label, accept_receive_button)
 
 window.mainloop()

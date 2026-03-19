@@ -1,4 +1,4 @@
-import socket, threading, struct, os
+import socket, threading, struct, os, translation
 
 TRANSFER_PORT = 50000
 BUFFER_SIZE = 4096
@@ -13,10 +13,10 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else "Desconocido"
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, language, file_progress, current_file_label):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
@@ -33,11 +33,7 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
         client.sendall(struct.pack("!I", len(file_name)))
         client.sendall(file_name)
         client.sendall(struct.pack("!Q", file_size))
-
-        if language == "es":
-            current_file_label.config(text=f"Enviando {file_name.decode()}")
-        else:
-            current_file_label.config(text=f"Sending {file_name.decode()}")
+        current_file_label.config(text=translation.translate("sending_file") + f" {file_name.decode()}")
 
         with open(file_path, "rb") as f:
             while chunk := f.read(BUFFER_SIZE):
@@ -54,20 +50,17 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     # ui changes
     current_file_label.pack_forget()
     status_label.pack()
-    if language == "es":
-        status_label.config(text="Archivo/s enviado/s")
-    else:
-        status_label.config(text="File/s sended")
+    status_label.config(text=translation.translate("sent"))
     file_progress.pack_forget()
     cancel_button.pack_forget()
     text_input.pack_forget()
     confirm_send_button.pack_forget()
     accept_send_button.pack(padx=5, pady=(5, 0), side="left")
 
-def start_receiving_files(status_label, accept_receive_button, language):
-    threading.Thread(target=receive_files, daemon=True, args=(status_label, accept_receive_button, language)).start()
+def start_receiving_files(status_label, accept_receive_button):
+    threading.Thread(target=receive_files, daemon=True, args=(status_label, accept_receive_button)).start()
 
-def receive_files(status_label, accept_receive_button, language):
+def receive_files(status_label, accept_receive_button):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(("0.0.0.0", TRANSFER_PORT))
     server.listen(1)
@@ -93,8 +86,5 @@ def receive_files(status_label, accept_receive_button, language):
     server.close()
 
     # ui changes
-    if language == "es":
-        status_label.config(text="Archivo/s recibido/s")
-    else:
-        status_label.config(text="File/s received")
+    status_label.config(text=translation.translate("received"))
     accept_receive_button.pack(padx=5, pady=(5, 0), side="left")
