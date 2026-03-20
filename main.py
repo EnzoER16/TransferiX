@@ -88,7 +88,7 @@ def to_send_files():
     send_ip = text_input.get()
     paths = files
 
-    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label)
+    start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress)
 
 def switch_lang():
     new_lang = "es" if translation.LANGUAGE == "en" else "en"
@@ -120,7 +120,6 @@ content_frame.pack(fill="both", expand=True, padx=5)
 status_label = tk.Label(content_frame, text=translation.translate("waiting_files"), bg="white", wraplength=490)
 status_label.pack()
 
-current_file_label = tk.Label(content_frame, text=translation.translate("sending_file"), bg="white", wraplength=490)
 file_progress = ttk.Progressbar(content_frame, maximum=100, length=460)
 
 # extra buttons frame
@@ -155,7 +154,6 @@ translation.register_widget(cancel_button, "cancel_button")
 translation.register_widget(confirm_send_button, "send_button")
 translation.register_widget(accept_send_button, "accept")
 translation.register_widget(accept_receive_button, "accept")
-translation.register_widget(current_file_label, "sending_file")
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
