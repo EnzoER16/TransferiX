@@ -11,7 +11,7 @@
         "files_selected": "Files selected",
         "sent": "Files sent",
         "received": "Files received",
-        "unknown": "Unknown"
+        "unknown": "Unknown IP"
     },
     "es": {
         "receive_button": "Recibir archivos",
@@ -25,6 +25,6 @@
         "files_selected": "Archivos seleccionados",
         "sent": "Archivos enviados",
         "received": "Archivos recibidos",
-        "unknown": "Desconocido"
+        "unknown": "IP desconocida"
     }
 }

@@ -11,7 +11,7 @@ def get_ip():
     except:
         hostname = socket.gethostname()
         local_ip = socket.gethostbyname(hostname)
-        return local_ip if local_ip and local_ip != "127.0.0.1" else "Desconocido"
+        return local_ip if local_ip and local_ip != "127.0.0.1" else None
     
 def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label):
     threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, current_file_label)).start()

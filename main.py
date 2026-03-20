@@ -106,7 +106,8 @@ ip_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
 ip_frame.pack(side="top", fill="x", padx=5, pady=(0, 5))
 
 my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
-my_ip.pack(pady=2)
+unknown_ip = tk.Label(ip_frame, text=translation.translate("unknown"), bg="white")
+unknown_ip.pack(pady=2) if get_ip() is None else my_ip.pack(pady=2)
 
 language_button_image = tk.PhotoImage(file="assets/language.png")
 language_button = tk.Button(ip_frame, image=language_button_image, command=switch_lang)
@@ -147,7 +148,7 @@ send_button.pack(side="left", expand=True, fill="x", padx=5, pady=5)
 
 translation.register_widget(receive_button, "receive_button")
 translation.register_widget(send_button, "send_button")
-translation.register_widget(my_ip, "unknown")
+translation.register_widget(unknown_ip, "unknown")
 translation.register_widget(status_label, "waiting_files")
 translation.register_widget(select_files_button, "select_files")
 translation.register_widget(cancel_button, "cancel_button")
