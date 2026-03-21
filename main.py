@@ -157,6 +157,6 @@ translation.register_widget(accept_receive_button, "accept")
 
 center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
 
-start_receiving_files(status_label, accept_receive_button)
+start_receiving_files(status_label, accept_receive_button, file_progress)
 
 window.mainloop()

@@ -53,10 +53,10 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     confirm_send_button.pack_forget()
     accept_send_button.pack(padx=5, pady=(5, 0), side="left")
 
-def start_receiving_files(status_label, accept_receive_button):
-    threading.Thread(target=receive_files, daemon=True, args=(status_label, accept_receive_button)).start()
+def start_receiving_files(status_label, accept_receive_button, file_progress):
+    threading.Thread(target=receive_files, daemon=True, args=(status_label, accept_receive_button, file_progress)).start()
 
-def receive_files(status_label, accept_receive_button):
+def receive_files(status_label, accept_receive_button, file_progress):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(("0.0.0.0", TRANSFER_PORT))
     server.listen(1)
@@ -64,10 +64,14 @@ def receive_files(status_label, accept_receive_button):
     connection, address = server.accept()
     num_files = struct.unpack("!I", connection.recv(4))[0]
 
+    file_progress.pack(pady=5)
+
     for _ in range(num_files):
         name_len = struct.unpack("!I", connection.recv(4))[0]
         file_name = connection.recv(name_len).decode()
         file_size = struct.unpack("!Q", connection.recv(8))[0]
+
+        status_label.config(text=translation.translate("receiving_file") + f" {file_name}")
 
         with open(file_name, "wb") as f:
             received = 0
@@ -78,9 +82,14 @@ def receive_files(status_label, accept_receive_button):
                 f.write(data)
                 received += len(data)
 
+                # file progress
+                file_percent = (received / file_size) * 100
+                file_progress.after(0, file_progress.config, {"value": file_percent})
+
     connection.close()
     server.close()
 
     # ui changes
     status_label.config(text=translation.translate("received"))
     accept_receive_button.pack(padx=5, pady=(5, 0), side="left")
+    file_progress.pack_forget()
