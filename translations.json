@@ -13,7 +13,8 @@
         "received": "Files received",
         "unknown": "Unknown IP",
         "receiving_file": "Receiving",
-        "settings": "Settings"
+        "settings": "Settings",
+        "language": "Language"
     },
     "es": {
         "receive_button": "Recibir archivos",
@@ -29,6 +30,7 @@
         "received": "Archivos recibidos",
         "unknown": "IP desconocida",
         "receiving_file": "Recibiendo",
-        "settings": "Configuración"
+        "settings": "Configuración",
+        "language": "Idioma"
     }
 }

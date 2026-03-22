@@ -90,9 +90,8 @@ def to_send_files():
 
     start_sending_files(send_ip, paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress)
 
-def switch_lang():
-    new_lang = "es" if translation.LANGUAGE == "en" else "en"
-    translation.set_language(new_lang)
+def switch_lang(language):
+    translation.set_language(language)
     translation.refresh_ui()
 
     if hasattr(window, "settings_window") and window.settings_window.winfo_exists():
@@ -109,13 +108,12 @@ def open_settings():
     center_window(settings, 450, 250)
 
     settings.language_button_image = tk.PhotoImage(file="assets/language.png")
-    language_button = tk.Menubutton(settings, relief=tk.RAISED, text="Language:", image=settings.language_button_image, compound="left")
+    language_button = tk.Menubutton(settings, relief=tk.RAISED, text=translation.translate("language"), image=settings.language_button_image, compound="left")
     language_button.menu = tk.Menu(language_button, tearoff=0)
     language_button["menu"] = language_button.menu
-
-    language_button.menu.add_command(label="English")
-    language_button.menu.add_command(label="Spanish")
-
+    language_button.menu.add_command(label="English", command=lambda: switch_lang("en"))
+    language_button.menu.add_command(label="Español", command=lambda: switch_lang("es"))
+    translation.register_widget(language_button, "language")
     language_button.pack(pady=5)
 
 # window configuration
