@@ -104,6 +104,10 @@ def open_settings():
 
     center_window(settings, 450, 250)
 
+    settings.lang_button_image = tk.PhotoImage(file="assets/language.png")
+    lang_button = tk.Button(settings, image=settings.lang_button_image, command=switch_lang)
+    lang_button.pack(pady=5)
+
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
