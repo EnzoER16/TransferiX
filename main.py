@@ -95,8 +95,12 @@ def switch_lang():
     translation.set_language(new_lang)
     translation.refresh_ui()
 
+    if hasattr(window, "settings_window") and window.settings_window.winfo_exists():
+        window.settings_window.title(translation.translate("settings"))
+
 def open_settings():
-    settings = tk.Toplevel(window)
+    window.settings_window = tk.Toplevel(window)
+    settings = window.settings_window
     settings.attributes("-toolwindow", True)
     settings.title(translation.translate("settings"))
     settings.geometry("450x250")
