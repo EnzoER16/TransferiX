@@ -98,6 +98,7 @@ def switch_lang():
 def open_settings():
     settings = tk.Toplevel(window)
     settings.attributes("-toolwindow", True)
+    settings.title(translation.translate("settings"))
     settings.geometry("450x250")
     settings.resizable(False, False)
 
