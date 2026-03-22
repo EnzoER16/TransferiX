@@ -8,7 +8,7 @@ WINDOW_HEIGHT = 300
 
 files = []
 
-def center_window(window_width, window_height):
+def center_window(win, window_width, window_height):
     # get screen size
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
@@ -18,7 +18,7 @@ def center_window(window_width, window_height):
     pos_y = (screen_height // 2) - (window_height // 2)
 
     # set window size and position
-    window.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
+    win.geometry(f"{window_width}x{window_height}+{pos_x}+{pos_y}")
 
 def on_send_click():
     # style
@@ -101,6 +101,8 @@ def open_settings():
     settings.geometry("450x250")
     settings.resizable(False, False)
 
+    center_window(settings, 450, 250)
+
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
@@ -116,7 +118,7 @@ unknown_ip = tk.Label(ip_frame, text=translation.translate("unknown"), bg="white
 unknown_ip.pack(pady=2) if get_ip() is None else my_ip.pack(pady=2)
 
 language_button_image = tk.PhotoImage(file="assets/language.png")
-language_button = tk.Button(ip_frame, image=language_button_image, command=switch_lang)
+language_button = tk.Button(ip_frame, image=language_button_image, command=open_settings)
 language_button.place(relx=1.0, x=-3, y=2, anchor="ne")
 
 # content frame
@@ -161,7 +163,7 @@ translation.register_widget(confirm_send_button, "send_button")
 translation.register_widget(accept_send_button, "accept")
 translation.register_widget(accept_receive_button, "accept")
 
-center_window(WINDOW_WIDTH, WINDOW_HEIGHT)
+center_window(window, WINDOW_WIDTH, WINDOW_HEIGHT)
 
 start_receiving_files(status_label, accept_receive_button, file_progress)
 
