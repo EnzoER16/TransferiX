@@ -108,9 +108,15 @@ def open_settings():
 
     center_window(settings, 450, 250)
 
-    settings.lang_button_image = tk.PhotoImage(file="assets/language.png")
-    lang_button = tk.Button(settings, image=settings.lang_button_image, command=switch_lang)
-    lang_button.pack(pady=5)
+    settings.language_button_image = tk.PhotoImage(file="assets/language.png")
+    language_button = tk.Menubutton(settings, relief=tk.RAISED, text="Language:", image=settings.language_button_image, compound="left")
+    language_button.menu = tk.Menu(language_button, tearoff=0)
+    language_button["menu"] = language_button.menu
+
+    language_button.menu.add_command(label="English")
+    language_button.menu.add_command(label="Spanish")
+
+    language_button.pack(pady=5)
 
 # window configuration
 window = tk.Tk()
