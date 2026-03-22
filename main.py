@@ -118,9 +118,9 @@ my_ip = tk.Label(ip_frame, text=f"{get_ip()}", bg="white")
 unknown_ip = tk.Label(ip_frame, text=translation.translate("unknown"), bg="white")
 unknown_ip.pack(pady=2) if get_ip() is None else my_ip.pack(pady=2)
 
-language_button_image = tk.PhotoImage(file="assets/language.png")
-language_button = tk.Button(ip_frame, image=language_button_image, command=open_settings)
-language_button.place(relx=1.0, x=-3, y=2, anchor="ne")
+settings_button_image = tk.PhotoImage(file="assets/configuration.png")
+settings_button = tk.Button(ip_frame, image=settings_button_image, command=open_settings)
+settings_button.place(relx=1.0, x=-3, y=2, anchor="ne")
 
 # content frame
 content_frame = tk.Frame(window, bg="white", relief="groove", borderwidth=1)
