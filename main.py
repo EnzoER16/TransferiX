@@ -95,6 +95,12 @@ def switch_lang():
     translation.set_language(new_lang)
     translation.refresh_ui()
 
+def open_settings():
+    settings = tk.Toplevel(window)
+    settings.attributes("-toolwindow", True)
+    settings.geometry("450x250")
+    settings.resizable(False, False)
+
 # window configuration
 window = tk.Tk()
 window.title("TransferiX")
