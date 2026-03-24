@@ -1,4 +1,4 @@
-import socket, threading, struct, os, translation
+import socket, threading, struct, os, translation, time
 
 TRANSFER_PORT = 50000
 BUFFER_SIZE = 4096
@@ -13,10 +13,10 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else None
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label, speed_label):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label, speed_label)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label, speed_label):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
@@ -24,9 +24,14 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     total_size = sum(os.path.getsize(p) for p in file_paths)
     total_sent = 0
 
+    start_time = time.time()
+    last_update = start_time
+    bytes_since_update = 0
+
     file_progress.pack(pady=5)
     total_progress_label.pack(pady=5)
     total_progress.pack(pady=5)
+    speed_label.pack(pady=5)
 
     for file_path in file_paths:
         file_name = os.path.basename(file_path).encode()
@@ -45,6 +50,7 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
                 chunk_size = len(chunk)
                 sent += chunk_size
                 total_sent += chunk_size
+                bytes_since_update += chunk_size
 
                 # file progress
                 file_percent = (sent / file_size) * 100
@@ -53,6 +59,19 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
                 # total progress
                 total_percent = (total_sent / total_size) * 100
                 total_progress.after(0, total_progress.config, {"value": total_percent})
+
+                # speed
+                now = time.time()
+                elapsed = now - last_update
+
+                if elapsed >= 0.5:
+                    speed = bytes_since_update / elapsed
+                    speed_mb = speed / (1024 * 1024)
+
+                    speed_label.after(0, speed_label.config, {"text": f"{speed_mb:.2f} MB/s"})
+
+                    last_update = now
+                    bytes_since_update = 0
 
     client.close()
 
