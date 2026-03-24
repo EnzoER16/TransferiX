@@ -13,15 +13,19 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else None
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
 
+    total_size = sum(os.path.getsize(p) for p in file_paths)
+    total_sent = 0
+
     file_progress.pack(pady=5)
+    total_progress.pack(pady=5)
 
     for file_path in file_paths:
         file_name = os.path.basename(file_path).encode()
@@ -36,18 +40,25 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
         with open(file_path, "rb") as f:
             while chunk := f.read(BUFFER_SIZE):
                 client.sendall(chunk)
+
                 chunk_size = len(chunk)
                 sent += chunk_size
+                total_sent += chunk_size
 
                 # file progress
                 file_percent = (sent / file_size) * 100
                 file_progress.after(0, file_progress.config, {"value": file_percent})
+
+                # total progress
+                total_percent = (total_sent / total_size) * 100
+                total_progress.after(0, total_progress.config, {"value": total_percent})
 
     client.close()
 
     # ui changes
     status_label.config(text=translation.translate("sent"))
     file_progress.pack_forget()
+    total_progress.pack_forget()
     cancel_button.pack_forget()
     text_input.pack_forget()
     confirm_send_button.pack_forget()
