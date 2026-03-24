@@ -74,6 +74,8 @@ def select_files():
         confirm_send_button.pack(padx=5, side="left")
 
 def cancel_selection():
+    global files
+    files = []
     status_label.config(text=translation.translate("select_to_send"))
     cancel_button.pack_forget()
     select_files_button.pack(padx=5, pady=(5, 0))
