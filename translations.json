@@ -14,7 +14,8 @@
         "unknown": "Unknown IP",
         "receiving_file": "Receiving",
         "settings": "Settings",
-        "language": "Language"
+        "language": "Language",
+        "total_progress": "Total progress"
     },
     "es": {
         "receive_button": "Recibir archivos",
@@ -31,6 +32,7 @@
         "unknown": "IP desconocida",
         "receiving_file": "Recibiendo",
         "settings": "Configuración",
-        "language": "Idioma"
+        "language": "Idioma",
+        "total_progress": "Progreso total"
     }
 }

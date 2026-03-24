@@ -13,10 +13,10 @@ def get_ip():
         local_ip = socket.gethostbyname(hostname)
         return local_ip if local_ip and local_ip != "127.0.0.1" else None
     
-def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress):
-    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress)).start()
+def start_sending_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label):
+    threading.Thread(target=send_files, daemon=True, args=(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label)).start()
 
-def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress):
+def send_files(device_ip, file_paths, status_label, cancel_button, text_input, confirm_send_button, accept_send_button, file_progress, total_progress, total_progress_label):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((device_ip, TRANSFER_PORT))
     client.sendall(struct.pack("!I", len(file_paths))) 
@@ -25,6 +25,7 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     total_sent = 0
 
     file_progress.pack(pady=5)
+    total_progress_label.pack(pady=5)
     total_progress.pack(pady=5)
 
     for file_path in file_paths:
@@ -58,6 +59,7 @@ def send_files(device_ip, file_paths, status_label, cancel_button, text_input, c
     # ui changes
     status_label.config(text=translation.translate("sent"))
     file_progress.pack_forget()
+    total_progress_label.pack_forget()
     total_progress.pack_forget()
     cancel_button.pack_forget()
     text_input.pack_forget()
