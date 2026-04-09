@@ -2,6 +2,7 @@ import customtkinter as ctk
 
 window = ctk.CTk()
 window.title("TransferiX")
+window.iconbitmap("assets/icon.ico")
 window.geometry("500x300")
 window.resizable(False, False)
 
