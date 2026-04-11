@@ -21,10 +21,13 @@ window.geometry("500x300")
 window.resizable(False, False)
 window.configure(fg_color="#0E1117")
 
-select_files_button = ctk.CTkButton(window, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15))
+buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
+buttons_frame.pack(side="bottom", fill="x")
+
+select_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15))
 select_files_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=5)
 
-send_files_button = ctk.CTkButton(window, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Send files", font=("Consolas", 15))
+send_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Send files", font=("Consolas", 15))
 send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5)
 
 center_window()
