@@ -21,6 +21,9 @@ window.geometry("500x300")
 window.resizable(False, False)
 window.configure(fg_color="#0E1117")
 
+status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), wraplength=490)
+status_label.pack(pady=(5, 0))
+
 buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 buttons_frame.pack(side="bottom", fill="x")
 
