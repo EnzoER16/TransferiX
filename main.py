@@ -19,6 +19,7 @@ window.title("TransferiX")
 window.iconbitmap("assets/icon.ico")
 window.geometry("500x300")
 window.resizable(False, False)
+window.configure(fg_color="#0E1117")
 
 center_window()
 
