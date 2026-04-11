@@ -15,11 +15,15 @@ def center_window():
 
     window.geometry(f"+{x_position}+{y_position}")
 
+def update_status(text):
+    status_label.configure(text=text)
+    window.update_idletasks()
+
 def select_files():
     global files
     files = filedialog.askopenfilenames(title="Select files")
     if files:
-        status_label.configure(text=f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
+        update_status(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
 
 window = ctk.CTk()
 window.title("TransferiX")
