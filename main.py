@@ -38,6 +38,9 @@ status_label.pack(pady=(5, 0))
 frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#005362")
 frame.pack(fill="both", expand=True, padx=5)
 
+devices_frame = ctk.CTkScrollableFrame(frame, fg_color="transparent")
+devices_frame.pack(fill="both", expand=True, padx=5, pady=5)
+
 buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 buttons_frame.pack(side="bottom", fill="x")
 
