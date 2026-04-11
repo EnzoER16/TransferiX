@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import filedialog
 
 def center_window():
     window.update_idletasks()
@@ -13,6 +14,12 @@ def center_window():
     y_position = (screen_height // 2) - (window_height // 2)
 
     window.geometry(f"+{x_position}+{y_position}")
+
+def select_files():
+    global files
+    files = filedialog.askopenfilenames(title="Select files")
+    if files:
+        status_label.configure(text=f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
 
 window = ctk.CTk()
 window.title("TransferiX")
@@ -30,7 +37,7 @@ frame.pack(fill="both", expand=True, padx=5)
 buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 buttons_frame.pack(side="bottom", fill="x")
 
-select_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15))
+select_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15), command=select_files)
 select_files_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=5)
 
 send_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Send files", font=("Consolas", 15))
