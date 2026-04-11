@@ -21,6 +21,12 @@ window.geometry("500x300")
 window.resizable(False, False)
 window.configure(fg_color="#0E1117")
 
+select_files_button = ctk.CTkButton(window, text="Select files")
+select_files_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=5)
+
+send_files_button = ctk.CTkButton(window, text="Send files")
+send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5)
+
 center_window()
 
 window.mainloop()
