@@ -24,6 +24,9 @@ window.configure(fg_color="#0E1117")
 status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), wraplength=490)
 status_label.pack(pady=(5, 0))
 
+frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#005362")
+frame.pack(fill="both", expand=True, padx=5)
+
 buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 buttons_frame.pack(side="bottom", fill="x")
 
