@@ -1,5 +1,11 @@
 import customtkinter as ctk
 from tkinter import filedialog
+from tkinterdnd2 import TkinterDnD, DND_FILES
+
+class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.TkdndVersion = TkinterDnD._require(self)
 
 def center_window():
     window.update_idletasks()
@@ -25,12 +31,20 @@ def select_files():
     if files:
         update_status(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
 
-window = ctk.CTk()
+def drop(event):
+    global files
+    files = window.tk.splitlist(event.data)
+    update_status(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
+
+window = CTkDnD()
 window.title("TransferiX")
 window.iconbitmap("assets/icon.ico")
 window.geometry("500x300")
 window.resizable(False, False)
 window.configure(fg_color="#0E1117")
+
+window.drop_target_register(DND_FILES)
+window.dnd_bind('<<Drop>>', drop)
 
 status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), wraplength=490)
 status_label.pack(pady=(5, 0))
