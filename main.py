@@ -25,16 +25,19 @@ def update_status(text):
     status_label.configure(text=text)
     window.update_idletasks()
 
-def select_files():
+def manage_files_selected(selected_files):
     global files
-    files = filedialog.askopenfilenames(title="Select files")
-    if files:
+    if selected_files:
+        files = selected_files
         update_status(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
 
+def select_files():
+    files = filedialog.askopenfilenames(title="Select files")
+    manage_files_selected(files)
+
 def drop(event):
-    global files
     files = window.tk.splitlist(event.data)
-    update_status(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
+    manage_files_selected(files)
 
 window = CTkDnD()
 window.title("TransferiX")
