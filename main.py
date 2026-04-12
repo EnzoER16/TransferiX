@@ -56,7 +56,7 @@ status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), wraplength=4
 status_label.pack(pady=(5, 0))
 
 # frames
-frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#005362")
+frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#092E3C")
 frame.pack(fill="both", expand=True, padx=5)
 
 devices_frame = ctk.CTkScrollableFrame(frame, fg_color="transparent")
