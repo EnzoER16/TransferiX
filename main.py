@@ -39,6 +39,7 @@ def on_files_dropped(event):
     files = window.tk.splitlist(event.data)
     handle_files_selected(files)
 
+# window setup
 window = CTkDnD()
 window.title("TransferiX")
 window.iconbitmap("assets/icon.ico")
@@ -46,18 +47,22 @@ window.geometry("500x300")
 window.resizable(False, False)
 window.configure(fg_color="#0E1117")
 
+# drag and drop
 window.drop_target_register(DND_FILES)
 window.dnd_bind('<<Drop>>', on_files_dropped)
 
+# label
 status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), wraplength=490)
 status_label.pack(pady=(5, 0))
 
+# frames
 frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#005362")
 frame.pack(fill="both", expand=True, padx=5)
 
 devices_frame = ctk.CTkScrollableFrame(frame, fg_color="transparent")
 devices_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
+# buttons
 buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 buttons_frame.pack(side="bottom", fill="x")
 
