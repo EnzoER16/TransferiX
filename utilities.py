@@ -1,4 +1,4 @@
-import platform, subprocess, os
+import platform, subprocess, os, socket
 
 def get_model():
     try:
@@ -9,5 +9,13 @@ def get_model():
             if "ANDROID_ROOT" in os.environ:
                 model = subprocess.check_output("getprop ro.product.model", shell=True)
                 return f"{model.decode().strip()}"
+    except Exception as error:
+        return error
+    
+def get_local_ip():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("8.8.8.8", 80))
+            return sock.getsockname()[0]
     except Exception as error:
         return error
