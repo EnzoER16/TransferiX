@@ -1,6 +1,11 @@
-import customtkinter as ctk
+import customtkinter as ctk, utilities, uuid, socket, json, time, threading
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
+
+DEVICE_ID = str(uuid.uuid4())[:8]
+DEVICE_NAME = utilities.get_model()
+DISCOVERY_PORT = 53000
+devices = {}
 
 class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self, *args, **kwargs):
@@ -39,6 +44,34 @@ def on_files_dropped(event):
     files = window.tk.splitlist(event.data)
     handle_files_selected(files)
 
+def send_broadcast():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # socket udp ipv4
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+    while True:
+        message = json.dumps({"id": DEVICE_ID, "name": DEVICE_NAME}).encode()
+        sock.sendto(message, ("255.255.255.255", DISCOVERY_PORT)) # send global broadcast
+        time.sleep(2)
+
+def receive_broadcast():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind(("", DISCOVERY_PORT)) # listen on all network interfaces
+    
+    while True:
+        try:
+            data, address = sock.recvfrom(1024)
+            ip = address[0]
+            message = json.loads(data.decode())
+
+            if message.get("id") == DEVICE_ID:
+                continue
+            if ip not in devices:
+                devices[ip] = {"name": message["name"]}
+
+        except Exception:
+            pass
+
 # window setup
 window = CTkDnD()
 window.title("TransferiX")
@@ -73,5 +106,7 @@ send_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#09
 send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5)
 
 center_window()
+threading.Thread(target=send_broadcast, daemon=True).start()
+threading.Thread(target=receive_broadcast, daemon=True).start()
 
 window.mainloop()
