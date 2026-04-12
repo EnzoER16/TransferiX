@@ -57,7 +57,7 @@ def receive_broadcast():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(("", DISCOVERY_PORT)) # listen on all network interfaces
-    
+
     while True:
         try:
             data, address = sock.recvfrom(1024)
@@ -66,11 +66,24 @@ def receive_broadcast():
 
             if message.get("id") == DEVICE_ID:
                 continue
+
+            now = time.time()
             if ip not in devices:
-                devices[ip] = {"name": message["name"]}
+                devices[ip] = {"name": message["name"], "last_seen": now}
+            else:
+                devices[ip]["last_seen"] = now
 
         except Exception:
             pass
+
+def clean_up_devices():
+    while True:
+        now = time.time()
+        for ip in list(devices.keys()):
+            if now - devices[ip]["last_seen"] > 6:
+                del devices[ip]
+
+        time.sleep(1)
 
 # window setup
 window = CTkDnD()
@@ -108,5 +121,6 @@ send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5
 center_window()
 threading.Thread(target=send_broadcast, daemon=True).start()
 threading.Thread(target=receive_broadcast, daemon=True).start()
+threading.Thread(target=clean_up_devices, daemon=True).start()
 
 window.mainloop()
