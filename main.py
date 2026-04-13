@@ -95,7 +95,7 @@ def on_device_add(ip, name):
             return
 
         device_button = ctk.CTkButton(devices_frame, text=f"{name} ({ip})", anchor="w", fg_color="#0B3A4B", hover_color="#005362", font=("Consolas", 15))
-        device_button.pack(fill="x", padx=5, pady=2)        
+        device_button.pack(fill="x", padx=(0, 5), pady=2)        
         device_widgets[ip] = device_button
 
     window.after(0, ui)
@@ -129,6 +129,7 @@ frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", bord
 frame.pack(fill="both", expand=True, padx=5)
 
 devices_frame = ctk.CTkScrollableFrame(frame, fg_color="transparent")
+devices_frame._scrollbar.configure(width=0)
 devices_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
 # buttons
