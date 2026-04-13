@@ -18,4 +18,4 @@ def get_local_ip():
             sock.connect(("8.8.8.8", 80))
             return sock.getsockname()[0]
     except Exception as error:
-        return error
+        return "0.0.0.0"

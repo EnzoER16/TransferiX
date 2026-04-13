@@ -21,7 +21,21 @@ def send_broadcast():
 
     while True:
         message = json.dumps({"id": DEVICE_ID, "name": DEVICE_NAME}).encode()
-        sock.sendto(message, ("255.255.255.255", DISCOVERY_PORT)) # send global broadcast
+
+        local_ip = utilities.get_local_ip()
+        # calculate the specific broadcast for the subnetwork
+        if local_ip != "0.0.0.0":
+            parts = local_ip.split('.')
+            broadcast_ip = f"{parts[0]}.{parts[1]}.{parts[2]}.255"
+        else:
+            broadcast_ip = "255.255.255.255"
+
+        try:
+            # send to calculated broadcast ip address
+            sock.sendto(message, (broadcast_ip, DISCOVERY_PORT))
+        except Exception:
+            pass
+
         time.sleep(2)
 
 def receive_broadcast(on_device_add):
