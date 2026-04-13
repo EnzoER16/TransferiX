@@ -6,6 +6,7 @@ DEVICE_ID = str(uuid.uuid4())[:8]
 DEVICE_NAME = utilities.get_model()
 DISCOVERY_PORT = 53000
 devices = {}
+device_widgets = {}
 
 class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self, *args, **kwargs):
@@ -53,7 +54,7 @@ def send_broadcast():
         sock.sendto(message, ("255.255.255.255", DISCOVERY_PORT)) # send global broadcast
         time.sleep(2)
 
-def receive_broadcast():
+def receive_broadcast(on_device_add):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(("", DISCOVERY_PORT)) # listen on all network interfaces
@@ -70,20 +71,42 @@ def receive_broadcast():
             now = time.time()
             if ip not in devices:
                 devices[ip] = {"name": message["name"], "last_seen": now}
+                on_device_add(ip, message["name"])
             else:
                 devices[ip]["last_seen"] = now
 
         except Exception:
             pass
 
-def clean_up_devices():
+def clean_up_devices(on_device_remove):
     while True:
         now = time.time()
         for ip in list(devices.keys()):
             if now - devices[ip]["last_seen"] > 6:
+                name = devices[ip]["name"]
                 del devices[ip]
+                on_device_remove(ip, name)
 
         time.sleep(1)
+
+def on_device_add(ip, name):
+    def ui():
+        if ip in device_widgets:
+            return
+
+        device_button = ctk.CTkButton(devices_frame, text=f"{name} ({ip})", anchor="w", fg_color="#0B3A4B", hover_color="#005362", font=("Consolas", 15))
+        device_button.pack(fill="x", padx=5, pady=2)        
+        device_widgets[ip] = device_button
+
+    window.after(0, ui)
+
+def on_device_remove(ip, name):
+    def ui():
+        if ip in device_widgets:
+            device_widgets[ip].destroy()
+            del device_widgets[ip]
+            
+    window.after(0, ui)
 
 # window setup
 window = CTkDnD()
@@ -120,7 +143,7 @@ send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5
 
 center_window()
 threading.Thread(target=send_broadcast, daemon=True).start()
-threading.Thread(target=receive_broadcast, daemon=True).start()
-threading.Thread(target=clean_up_devices, daemon=True).start()
+threading.Thread(target=receive_broadcast, args=(on_device_add,), daemon=True).start()
+threading.Thread(target=clean_up_devices, args=(on_device_remove,), daemon=True).start()
 
 window.mainloop()
