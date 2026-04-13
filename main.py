@@ -13,37 +13,7 @@ class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
         super().__init__(*args, **kwargs)
         self.TkdndVersion = TkinterDnD._require(self)
 
-def center_window():
-    window.update_idletasks()
-
-    window_width = window.winfo_width()
-    window_height = window.winfo_height()
-
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
-
-    x_position = (screen_width // 2) - (window_width // 2)
-    y_position = (screen_height // 2) - (window_height // 2)
-
-    window.geometry(f"+{x_position}+{y_position}")
-
-def update_status_label(text):
-    status_label.configure(text=text)
-    window.update_idletasks()
-
-def handle_files_selected(selected_files):
-    global files
-    if selected_files:
-        files = selected_files
-        update_status_label(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
-
-def on_files_selected():
-    files = filedialog.askopenfilenames(title="Select files")
-    handle_files_selected(files)
-
-def on_files_dropped(event):
-    files = window.tk.splitlist(event.data)
-    handle_files_selected(files)
+# discovery functions
 
 def send_broadcast():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # socket udp ipv4
@@ -88,6 +58,40 @@ def clean_up_devices(on_device_remove):
                 on_device_remove(ip, name)
 
         time.sleep(1)
+
+# ui functions
+
+def center_window():
+    window.update_idletasks()
+
+    window_width = window.winfo_width()
+    window_height = window.winfo_height()
+
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    x_position = (screen_width // 2) - (window_width // 2)
+    y_position = (screen_height // 2) - (window_height // 2)
+
+    window.geometry(f"+{x_position}+{y_position}")
+
+def update_status_label(text):
+    status_label.configure(text=text)
+    window.update_idletasks()
+
+def handle_files_selected(selected_files):
+    global files
+    if selected_files:
+        files = selected_files
+        update_status_label(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
+
+def on_files_selected():
+    files = filedialog.askopenfilenames(title="Select files")
+    handle_files_selected(files)
+
+def on_files_dropped(event):
+    files = window.tk.splitlist(event.data)
+    handle_files_selected(files)
 
 def on_device_add(ip, name):
     def ui():
