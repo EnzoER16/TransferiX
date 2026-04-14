@@ -37,10 +37,10 @@ def send_udp_message(message_dict):
 
 def send_broadcast():
     while True:
-        send_udp_message({"id": DEVICE_ID, "name": DEVICE_NAME})
+        send_udp_message({"id": DEVICE_ID, "name": DEVICE_NAME, "alive": True})
         time.sleep(2)
 
-def receive_broadcast(on_device_add):
+def receive_broadcast(on_device_add, on_device_remove):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(("", DISCOVERY_PORT)) # listen on all network interfaces
@@ -52,6 +52,13 @@ def receive_broadcast(on_device_add):
             message = json.loads(data.decode())
 
             if message.get("id") == DEVICE_ID:
+                continue
+
+            if message.get("alive") == False:
+                if ip in devices:
+                    name = devices[ip]["name"]
+                    del devices[ip]
+                    on_device_remove(ip, name)
                 continue
 
             now = time.time()
@@ -74,6 +81,9 @@ def clean_up_devices(on_device_remove):
                 on_device_remove(ip, name)
 
         time.sleep(1)
+
+def send_exit():
+    send_udp_message({"id": DEVICE_ID, "name": DEVICE_NAME, "alive": False})
 
 # ui functions
 
@@ -128,6 +138,10 @@ def on_device_remove(ip, name):
             
     window.after(0, ui)
 
+def on_close():
+    send_exit()
+    window.destroy()
+
 # window setup
 window = CTkDnD()
 window.title("TransferiX")
@@ -164,7 +178,8 @@ send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5
 
 center_window()
 threading.Thread(target=send_broadcast, daemon=True).start()
-threading.Thread(target=receive_broadcast, args=(on_device_add,), daemon=True).start()
+threading.Thread(target=receive_broadcast, args=(on_device_add, on_device_remove), daemon=True).start()
 threading.Thread(target=clean_up_devices, args=(on_device_remove,), daemon=True).start()
 
+window.protocol("WM_DELETE_WINDOW", on_close)
 window.mainloop()
