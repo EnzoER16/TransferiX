@@ -15,12 +15,11 @@ class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
 
 # discovery functions
 
-def send_broadcast():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # socket udp ipv4
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+def send_udp_message(message_dict):
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock: # socket udp ipv4
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
-    while True:
-        message = json.dumps({"id": DEVICE_ID, "name": DEVICE_NAME}).encode()
+        message = json.dumps(message_dict).encode()
 
         local_ip = utilities.get_local_ip()
         # calculate the specific broadcast for the subnetwork
@@ -33,9 +32,12 @@ def send_broadcast():
         try:
             # send to calculated broadcast ip address
             sock.sendto(message, (broadcast_ip, DISCOVERY_PORT))
-        except Exception:
+        except:
             pass
 
+def send_broadcast():
+    while True:
+        send_udp_message({"id": DEVICE_ID, "name": DEVICE_NAME})
         time.sleep(2)
 
 def receive_broadcast(on_device_add):
