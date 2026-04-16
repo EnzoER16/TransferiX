@@ -130,7 +130,7 @@ def on_device_add(ip, name):
         if ip in device_widgets:
             return
 
-        device_button = ctk.CTkButton(devices_frame, text=f"{name} ({ip})", anchor="w", fg_color="#0B3A4B", hover_color="#005362", font=("Consolas", 15))
+        device_button = ctk.CTkButton(devices_frame, text=f"{name} ({ip})", anchor="w", fg_color="#0B3A4B", hover_color="#005362", font=("Consolas", 15), command=lambda: select_device(ip))
         device_button.pack(fill="x", padx=(0, 5), pady=2)        
         device_widgets[ip] = device_button
 
@@ -156,6 +156,17 @@ def on_send_click():
     if not selected_ip:
         update_status_label("Select a device to send")
         return
+
+def select_device(ip):
+    global selected_ip
+    selected_ip = ip
+    update_status_label(f"Device selected: {devices[ip]['name']}")
+    
+    for d_ip, widget in device_widgets.items():
+        if d_ip == ip:
+            widget.configure(fg_color="#008B8B")
+        else:
+            widget.configure(fg_color="#0B3A4B")
 
 # window setup
 window = CTkDnD()
