@@ -2,12 +2,18 @@ import customtkinter as ctk, utilities, uuid, socket, json, time, threading
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
+# discovery config
 DEVICE_ID = str(uuid.uuid4())[:8]
 DEVICE_NAME = utilities.get_model()
 DISCOVERY_PORT = 53000
 devices = {}
 device_widgets = {}
 
+# trasnfer config
+files = []
+selected_ip = None
+
+# custom tkinter with drag and drop support
 class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -142,6 +148,15 @@ def on_close():
     send_exit()
     window.destroy()
 
+def on_send_click():
+    global files, selected_ip
+    if not files:
+        update_status_label("Select files first")
+        return
+    if not selected_ip:
+        update_status_label("Select a device to send")
+        return
+
 # window setup
 window = CTkDnD()
 window.title("TransferiX")
@@ -173,7 +188,7 @@ buttons_frame.pack(side="bottom", fill="x")
 select_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15), command=on_files_selected)
 select_files_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=5)
 
-send_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Send files", font=("Consolas", 15))
+send_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Send files", font=("Consolas", 15), command=on_send_click)
 send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5)
 
 center_window()
