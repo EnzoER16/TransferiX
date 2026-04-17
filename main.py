@@ -1,4 +1,4 @@
-import customtkinter as ctk, utilities, uuid, socket, json, time, threading
+import customtkinter as ctk, utilities, uuid, socket, json, time, threading, os, struct
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
@@ -10,6 +10,8 @@ devices = {}
 device_widgets = {}
 
 # trasnfer config
+TRANSFER_PORT = 50000
+BUFFER_SIZE = 256 * 1024
 files = []
 selected_ip = None
 
@@ -91,6 +93,66 @@ def clean_up_devices(on_device_remove):
 def send_exit():
     send_udp_message({"id": DEVICE_ID, "name": DEVICE_NAME, "alive": False})
 
+# transfer functions
+
+def recv_all(sock, n):
+    data = bytearray()
+    while len(data) < n:
+        packet = sock.recv(n - len(data))
+        if not packet: return None
+        data.extend(packet)
+    return data
+
+def start_sending_files(device_ip):
+    threading.Thread(target=send_files, args=(device_ip,), daemon=True).start()
+
+def send_files(device_ip):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+            client.connect((device_ip, TRANSFER_PORT))
+            for file_path in files:
+                name = os.path.basename(file_path).encode()
+                size = os.path.getsize(file_path)
+                header = struct.pack(f"!I{len(name)}sQ", len(name), name, size)
+                client.sendall(header)
+                with open(file_path, "rb") as f:
+                    client.sendfile(f)
+            update_status_label("Files sent successfully")
+    except Exception:
+        pass
+
+def start_receiving_files():
+    update_status_label("Waiting for connections")
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("0.0.0.0", TRANSFER_PORT))
+        server.listen()
+        while True:
+            connection, _ = server.accept()
+            threading.Thread(target=handle_client, args=(connection,), daemon=True).start()
+
+def handle_client(connection):
+    with connection:
+        try:
+            while True:
+                header_len_raw = recv_all(connection, 4)
+                if not header_len_raw: break
+                
+                name_len = struct.unpack("!I", header_len_raw)[0]
+                name = recv_all(connection, name_len).decode()
+                file_size = struct.unpack("!Q", recv_all(connection, 8))[0]
+
+                with open(name, "wb") as f:
+                    remaining = file_size
+                    while remaining > 0:
+                        chunk = connection.recv(min(remaining, BUFFER_SIZE))
+                        if not chunk: break
+                        f.write(chunk)
+                        remaining -= len(chunk)
+            update_status_label("Files received successfully")
+        except Exception:
+            pass
+
 # ui functions
 
 def center_window():
@@ -157,6 +219,9 @@ def on_send_click():
         update_status_label("Select a device to send")
         return
 
+    update_status_label("Sending files")
+    start_sending_files(selected_ip)
+
 def select_device(ip):
     global selected_ip
     selected_ip = ip
@@ -206,6 +271,7 @@ center_window()
 threading.Thread(target=send_broadcast, daemon=True).start()
 threading.Thread(target=receive_broadcast, args=(on_device_add, on_device_remove), daemon=True).start()
 threading.Thread(target=clean_up_devices, args=(on_device_remove,), daemon=True).start()
+threading.Thread(target=start_receiving_files, daemon=True).start()
 
 window.protocol("WM_DELETE_WINDOW", on_close)
 window.mainloop()
