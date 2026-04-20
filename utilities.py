@@ -1,4 +1,4 @@
-import platform, subprocess, os, socket
+import platform, subprocess, os, socket, sys
 
 def get_model():
     try:
@@ -19,3 +19,10 @@ def get_local_ip():
             return sock.getsockname()[0]
     except Exception as error:
         return "0.0.0.0"
+    
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)

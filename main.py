@@ -1,4 +1,4 @@
-import customtkinter as ctk, utilities, uuid, socket, json, time, threading, os, struct
+import customtkinter as ctk, utilities, uuid, socket, json, time, threading, os, struct, sys
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
@@ -236,7 +236,7 @@ def select_device(ip):
 # window setup
 window = CTkDnD()
 window.title("TransferiX")
-window.iconbitmap("assets/icon.ico")
+window.iconbitmap(utilities.resource_path("assets/icon.ico"))
 window.geometry("500x300")
 window.resizable(False, False)
 window.configure(fg_color="#0E1117")
