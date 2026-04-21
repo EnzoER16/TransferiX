@@ -9,7 +9,7 @@ Transferix is a file transfer application built using Python. It allows users to
 ## Features
 
 * **Automatic Device Discovery:** Uses UDP *broadcast discovery* to instantly find other devices on your local network that are running TransferiX.
-* **Stable and Direct Transfer:** Implements file transfers over TCP sockets, ensuring fast and reliable data transmission within the local network.
+* **Stable and Direct Transfer:** Implements file transfers over TCP sockets, ensuring fast data transmission within the local network.
 * **Drag & Drop Support:** Integrates drag-and-drop functionality using `tkinterdnd2` and `CustomTkinter`, making file selection easy on desktop systems.
 
 > [!NOTE]
