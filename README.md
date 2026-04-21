@@ -22,4 +22,5 @@ Transferix is a file transfer application built using Python. It allows users to
 > Since TransferiX uses local ports to discover devices and receive files, the Windows Firewall will prompt you for permissions the first time you run the program. Please keep the following in mind when using the app:
 > * **Trusted Networks (Personal Use):** For everyday use on a home network or connected to your phone's hotspot *(tested)*, there shouldn't be any issues. You can choose to check the "Public networks" box in the firewall prompt upon startup, provided you trust the network you are connected to.
 > * **Untrusted Networks:** If you do not trust the network, we recommend not checking the box. Instead, go to your system settings and ensure your current Wi-Fi connection is set to Private Network.
+> * **Unencrypted Transfers:** Currently, files are sent without encryption. Anyone actively monitoring the network traffic could potentially intercept the data. Please avoid transferring sensitive or confidential information.
 > * **Security Note:** It is advised not to use the app or enable these permissions on "real public networks" (such as cafes, airports, etc.).
