@@ -246,7 +246,7 @@ window.drop_target_register(DND_FILES)
 window.dnd_bind('<<Drop>>', on_files_dropped)
 
 # label
-status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), wraplength=490)
+status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), text_color="white", wraplength=490)
 status_label.pack(pady=(5, 0))
 
 # frames
