@@ -118,8 +118,8 @@ def send_files(device_ip):
                 with open(file_path, "rb") as f:
                     client.sendfile(f)
             update_status_label("Files sent successfully")
-    except Exception:
-        pass
+    except Exception as error:
+        update_status_label(error)
 
 def start_receiving_files():
     update_status_label("Waiting for connections")
@@ -150,8 +150,8 @@ def handle_client(connection):
                         f.write(chunk)
                         remaining -= len(chunk)
             update_status_label("Files received successfully")
-        except Exception:
-            pass
+        except Exception as error:
+            update_status_label(error)
 
 # ui functions
 
