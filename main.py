@@ -129,9 +129,9 @@ def start_receiving_files():
         server.listen()
         while True:
             connection, _ = server.accept()
-            threading.Thread(target=handle_client, args=(connection,), daemon=True).start()
+            threading.Thread(target=receive_files, args=(connection,), daemon=True).start()
 
-def handle_client(connection):
+def receive_files(connection):
     with connection:
         try:
             while True:
