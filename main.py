@@ -1,4 +1,4 @@
-import customtkinter as ctk, utilities, uuid, socket, json, time, threading, os, struct, sys
+import customtkinter as ctk, utilities, uuid, socket, json, time, threading, os, struct
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
