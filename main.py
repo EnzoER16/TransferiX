@@ -109,14 +109,21 @@ def start_sending_files(device_ip):
 def send_files(device_ip):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+            client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             client.connect((device_ip, TRANSFER_PORT))
             for file_path in files:
                 name = os.path.basename(file_path).encode()
                 size = os.path.getsize(file_path)
                 header = struct.pack(f"!I{len(name)}sQ", len(name), name, size)
                 client.sendall(header)
+
                 with open(file_path, "rb") as f:
-                    client.sendfile(f)
+                    while True:
+                        chunk = f.read(BUFFER_SIZE)
+                        if not chunk:
+                            break
+                        client.sendall(chunk)
+
             update_status_label("Files sent successfully")
     except Exception as error:
         update_status_label(error)
