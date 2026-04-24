@@ -176,9 +176,8 @@ def center_window():
 
     window.geometry(f"+{x_position}+{y_position}")
 
-def update_status_label(text):
-    status_label.configure(text=text)
-    window.update_idletasks()
+def update_status_label(message):
+    status_label.after(0, lambda: status_label.configure(text=str(message)))
 
 def handle_files_selected(selected_files):
     global files
