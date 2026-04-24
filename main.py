@@ -260,7 +260,7 @@ def select_device(ip):
     
     for d_ip, widget in device_widgets.items():
         if d_ip == ip:
-            widget.configure(fg_color="#008B8B")
+            widget.configure(fg_color="#008B8B", hover_color="#008B8B")
         else:
             widget.configure(fg_color="#0B3A4B")
 
