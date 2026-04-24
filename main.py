@@ -11,7 +11,7 @@ device_widgets = {}
 
 # trasnfer config
 TRANSFER_PORT = 50000
-BUFFER_SIZE = 256 * 1024
+BUFFER_SIZE = 4 * 1024 * 1024
 files = []
 selected_ip = None
 
