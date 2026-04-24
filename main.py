@@ -120,6 +120,9 @@ def send_files(device_ip):
                 header = struct.pack(f"!I{len(name)}sQ", len(name), name, size)
                 client.sendall(header)
 
+                sent = 0
+                progress_bar.pack(pady=(0, 5))
+
                 with open(file_path, "rb") as f:
                     while True:
                         chunk = f.read(BUFFER_SIZE)
@@ -127,6 +130,12 @@ def send_files(device_ip):
                             break
                         client.sendall(chunk)
 
+                        sent += len(chunk)
+                        progress = sent / size
+                        progress_bar.after(0, lambda p=progress: progress_bar.set(p))
+                progress_bar.after(0, lambda p=progress: progress_bar.set(1))
+
+            progress_bar.pack_forget()
             update_status_label("Files sent successfully")
     except Exception as error:
         update_status_label(error)
@@ -152,15 +161,27 @@ def receive_files(connection):
                 name = recv_all(connection, name_len).decode()
                 file_size = struct.unpack("!Q", recv_all(connection, 8))[0]
 
+                progress_bar.pack(pady=(0, 5))
                 update_status_label(f"Receiving: {name}")
 
                 with open(name, "wb") as f:
                     remaining = file_size
+                    received = 0
+
                     while remaining > 0:
                         chunk = connection.recv(min(remaining, BUFFER_SIZE))
                         if not chunk: break
                         f.write(chunk)
+
+                        len_chunk = len(chunk)
                         remaining -= len(chunk)
+
+                        received += len_chunk
+                        progress = received / file_size
+                        progress_bar.after(0, lambda p=progress: progress_bar.set(p))
+                progress_bar.after(0, lambda: progress_bar.set(1))
+
+            progress_bar.pack_forget()
             update_status_label("Files received successfully")
         except Exception as error:
             update_status_label(error)
@@ -255,9 +276,15 @@ window.configure(fg_color="#0E1117")
 window.drop_target_register(DND_FILES)
 window.dnd_bind('<<Drop>>', on_files_dropped)
 
-# label
-status_label = ctk.CTkLabel(window, text="", font=("Consolas", 15), text_color="white", wraplength=490)
+# info frame
+info_frame = ctk.CTkFrame(window, width=490, height=25, fg_color="transparent")
+info_frame.pack()
+
+status_label = ctk.CTkLabel(info_frame, text="", font=("Consolas", 15), text_color="white", wraplength=490)
 status_label.pack(pady=(5, 0))
+
+progress_bar = ctk.CTkProgressBar(info_frame, width=300, progress_color="#0095B0", fg_color="#0B3A4B")
+progress_bar.set(0)
 
 # frames
 frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#092E3C")
