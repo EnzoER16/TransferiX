@@ -112,6 +112,9 @@ def send_files(device_ip):
             client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             client.connect((device_ip, TRANSFER_PORT))
             for file_path in files:
+                file_name = os.path.basename(file_path)
+                update_status_label(f"Sending: {file_name}")
+
                 name = os.path.basename(file_path).encode()
                 size = os.path.getsize(file_path)
                 header = struct.pack(f"!I{len(name)}sQ", len(name), name, size)
@@ -148,6 +151,8 @@ def receive_files(connection):
                 name_len = struct.unpack("!I", header_len_raw)[0]
                 name = recv_all(connection, name_len).decode()
                 file_size = struct.unpack("!Q", recv_all(connection, 8))[0]
+
+                update_status_label(f"Receiving: {name}")
 
                 with open(name, "wb") as f:
                     remaining = file_size
@@ -225,7 +230,6 @@ def on_send_click():
         update_status_label("Select a device to send")
         return
 
-    update_status_label("Sending files")
     start_sending_files(selected_ip)
 
 def select_device(ip):
