@@ -161,7 +161,7 @@ def send_files(device_ip):
         update_status_label(error)
 
 def start_receiving_files():
-    update_status_label("Waiting for connections")
+    update_status_label(f"Waiting for connections ({DEVICE_NAME})")
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("0.0.0.0", TRANSFER_PORT))
