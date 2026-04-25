@@ -111,6 +111,7 @@ def send_files(device_ip):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
             client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             client.connect((device_ip, TRANSFER_PORT))
+
             for file_path in files:
                 file_name = os.path.basename(file_path)
 
@@ -122,9 +123,11 @@ def send_files(device_ip):
                 sent = 0
                 start_time = time.time()
                 last_update_time = start_time
-                progress_bar.pack(pady=(0, 5))
+                update_interval = 0.2
 
-                update_status_label(f"Sending: {file_name}")
+                progress_bar.after(0, lambda: progress_bar.pack(pady=(0, 5)))
+                progress_bar.after(0, lambda: progress_bar.set(0))
+                update_status_label(f"Sending: {file_name} - 0 MB/s")
 
                 with open(file_path, "rb") as f:
                     while True:
@@ -134,22 +137,27 @@ def send_files(device_ip):
                         client.sendall(chunk)
 
                         sent += len(chunk)
-                        progress = sent / size
-                        progress_bar.after(0, lambda p=progress: progress_bar.set(p))
-
                         now = time.time()
-                        if now - last_update_time >= 0.5:
+
+                        if now - last_update_time >= update_interval:
+                            progress = sent / size
+                            progress_bar.after(0, lambda p=progress: progress_bar.set(p))
+
                             elapsed = now - start_time
                             if elapsed > 0:
                                 speed_mbps = (sent / (1024 * 1024)) / elapsed
                                 update_status_label(f"Sending: {file_name} - {speed_mbps:.1f} MB/s")
                             last_update_time = now
+                            update_interval = 1.0
 
-                progress_bar.after(0, lambda p=progress: progress_bar.set(1))
+                progress_bar.after(0, lambda: progress_bar.set(1.0))
 
-            progress_bar.pack_forget()
+            progress_bar.after(0, lambda: progress_bar.pack_forget())
+            progress_bar.after(0, lambda: progress_bar.set(0))
             update_status_label("Files sent successfully")
+
     except Exception as error:
+        progress_bar.after(0, lambda: progress_bar.pack_forget())
         update_status_label(error)
 
 def start_receiving_files():
@@ -173,8 +181,9 @@ def receive_files(connection):
                 name = recv_all(connection, name_len).decode()
                 file_size = struct.unpack("!Q", recv_all(connection, 8))[0]
 
-                progress_bar.pack(pady=(0, 5))
-                update_status_label(f"Receiving: {name}")
+                progress_bar.after(0, lambda: progress_bar.pack(pady=(0, 5)))
+                progress_bar.after(0, lambda: progress_bar.set(0))
+                update_status_label(f"Receiving: {name} - 0 MB/s")
 
                 with open(name, "wb") as f:
                     remaining = file_size
@@ -182,6 +191,7 @@ def receive_files(connection):
 
                     start_time = time.time()
                     last_update_time = start_time
+                    update_interval = 0.2
 
                     while remaining > 0:
                         chunk = connection.recv(min(remaining, BUFFER_SIZE))
@@ -190,24 +200,27 @@ def receive_files(connection):
 
                         len_chunk = len(chunk)
                         remaining -= len(chunk)
-
                         received += len_chunk
-                        progress = received / file_size
-                        progress_bar.after(0, lambda p=progress: progress_bar.set(p))
 
                         now = time.time()
-                        if now - last_update_time >= 0.5:
+                        if now - last_update_time >= update_interval:
+                            progress = received / file_size
+                            progress_bar.after(0, lambda p=progress: progress_bar.set(p))
+
                             elapsed = now - start_time
                             if elapsed > 0:
                                 speed_mbps = (received / (1024 * 1024)) / elapsed
                                 update_status_label(f"Receiving: {name} - {speed_mbps:.1f} MB/s")
                             last_update_time = now
+                            update_interval = 1.0
 
-                progress_bar.after(0, lambda: progress_bar.set(1))
+                progress_bar.after(0, lambda: progress_bar.set(1.0))
 
-            progress_bar.pack_forget()
+            progress_bar.after(0, lambda: progress_bar.pack_forget())
+            progress_bar.after(0, lambda: progress_bar.set(0))
             update_status_label("Files received successfully")
         except Exception as error:
+            progress_bar.after(0, lambda: progress_bar.pack_forget())
             update_status_label(error)
 
 # ui functions
