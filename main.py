@@ -113,7 +113,6 @@ def send_files(device_ip):
             client.connect((device_ip, TRANSFER_PORT))
             for file_path in files:
                 file_name = os.path.basename(file_path)
-                update_status_label(f"Sending: {file_name}")
 
                 name = os.path.basename(file_path).encode()
                 size = os.path.getsize(file_path)
@@ -121,7 +120,11 @@ def send_files(device_ip):
                 client.sendall(header)
 
                 sent = 0
+                start_time = time.time()
+                last_update_time = start_time
                 progress_bar.pack(pady=(0, 5))
+
+                update_status_label(f"Sending: {file_name}")
 
                 with open(file_path, "rb") as f:
                     while True:
@@ -133,6 +136,15 @@ def send_files(device_ip):
                         sent += len(chunk)
                         progress = sent / size
                         progress_bar.after(0, lambda p=progress: progress_bar.set(p))
+
+                        now = time.time()
+                        if now - last_update_time >= 0.5:
+                            elapsed = now - start_time
+                            if elapsed > 0:
+                                speed_mbps = (sent / (1024 * 1024)) / elapsed
+                                update_status_label(f"Sending: {file_name} - {speed_mbps:.1f} MB/s")
+                            last_update_time = now
+
                 progress_bar.after(0, lambda p=progress: progress_bar.set(1))
 
             progress_bar.pack_forget()
@@ -168,6 +180,9 @@ def receive_files(connection):
                     remaining = file_size
                     received = 0
 
+                    start_time = time.time()
+                    last_update_time = start_time
+
                     while remaining > 0:
                         chunk = connection.recv(min(remaining, BUFFER_SIZE))
                         if not chunk: break
@@ -179,6 +194,15 @@ def receive_files(connection):
                         received += len_chunk
                         progress = received / file_size
                         progress_bar.after(0, lambda p=progress: progress_bar.set(p))
+
+                        now = time.time()
+                        if now - last_update_time >= 0.5:
+                            elapsed = now - start_time
+                            if elapsed > 0:
+                                speed_mbps = (received / (1024 * 1024)) / elapsed
+                                update_status_label(f"Receiving: {name} - {speed_mbps:.1f} MB/s")
+                            last_update_time = now
+
                 progress_bar.after(0, lambda: progress_bar.set(1))
 
             progress_bar.pack_forget()
