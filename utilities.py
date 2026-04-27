@@ -26,3 +26,17 @@ def resource_path(relative_path):
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
+
+def generate_unique_filename(filename):
+    if not os.path.exists(filename):
+        return filename
+
+    name, extension = os.path.splitext(filename)
+    counter = 1
+
+    new_filename = f"{name} ({counter}){extension}"
+    while os.path.exists(new_filename):
+        counter += 1
+        new_filename = f"{name} ({counter}){extension}"
+        
+    return new_filename

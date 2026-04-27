@@ -178,8 +178,10 @@ def receive_files(connection):
                 if not header_len_raw: break
                 
                 name_len = struct.unpack("!I", header_len_raw)[0]
-                name = recv_all(connection, name_len).decode()
+                original_name = recv_all(connection, name_len).decode()
                 file_size = struct.unpack("!Q", recv_all(connection, 8))[0]
+
+                name = utilities.generate_unique_filename(original_name)
 
                 progress_bar.after(0, lambda: progress_bar.pack(pady=(0, 5)))
                 progress_bar.after(0, lambda: progress_bar.set(0))
