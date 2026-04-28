@@ -15,6 +15,8 @@ BUFFER_SIZE = 4 * 1024 * 1024
 files = []
 selected_ip = None
 
+BASE_DIR = utilities.get_download_directory()
+
 # custom tkinter with drag and drop support
 class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self, *args, **kwargs):
@@ -181,11 +183,12 @@ def receive_files(connection):
                 original_name = recv_all(connection, name_len).decode()
                 file_size = struct.unpack("!Q", recv_all(connection, 8))[0]
 
-                name = utilities.generate_unique_filename(original_name)
+                name = utilities.generate_unique_filename(BASE_DIR, original_name)
+                show_name = os.path.basename(name)
 
                 progress_bar.after(0, lambda: progress_bar.pack(pady=(0, 5)))
                 progress_bar.after(0, lambda: progress_bar.set(0))
-                update_status_label(f"Receiving: {name} - 0 MB/s")
+                update_status_label(f"Receiving: {show_name} - 0 MB/s")
 
                 with open(name, "wb") as f:
                     remaining = file_size
@@ -212,7 +215,7 @@ def receive_files(connection):
                             elapsed = now - start_time
                             if elapsed > 0:
                                 speed_mbps = (received / (1024 * 1024)) / elapsed
-                                update_status_label(f"Receiving: {name} - {speed_mbps:.1f} MB/s")
+                                update_status_label(f"Receiving: {show_name} - {speed_mbps:.1f} MB/s")
                             last_update_time = now
                             update_interval = 1.0
 

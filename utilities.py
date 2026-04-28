@@ -1,4 +1,4 @@
-import platform, subprocess, os, socket, sys
+import platform, subprocess, os, socket, sys, pathlib
 
 def get_model():
     try:
@@ -27,16 +27,24 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-def generate_unique_filename(filename):
-    if not os.path.exists(filename):
-        return filename
+def get_download_directory():
+    if "android" in platform.platform().lower() or "ANDROID_STORAGE" in os.environ:
+        return "/storage/emulated/0/Download"
+    else:
+        return str(pathlib.Path.home() / "Downloads")
+
+def generate_unique_filename(base_dir, filename):
+    full_path = os.path.join(base_dir, filename)
+
+    if not os.path.exists(full_path):
+        return full_path
 
     name, extension = os.path.splitext(filename)
     counter = 1
 
-    new_filename = f"{name} ({counter}){extension}"
-    while os.path.exists(new_filename):
+    new_full_path = os.path.join(base_dir, f"{name} ({counter}){extension}")
+    while os.path.exists(new_full_path):
         counter += 1
-        new_filename = f"{name} ({counter}){extension}"
+        new_full_path = os.path.join(base_dir, f"{name} ({counter}){extension}")
         
-    return new_filename
+    return new_full_path
