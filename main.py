@@ -152,6 +152,7 @@ def send_files(device_ip):
                             last_update_time = now
                             update_interval = 1.0
 
+                client.recv(3)
                 progress_bar.after(0, lambda: progress_bar.set(1.0))
 
             progress_bar.after(0, lambda: progress_bar.pack_forget())
@@ -219,6 +220,7 @@ def receive_files(connection):
                             last_update_time = now
                             update_interval = 1.0
 
+                connection.sendall(b"ACK")
                 progress_bar.after(0, lambda: progress_bar.set(1.0))
 
             progress_bar.after(0, lambda: progress_bar.pack_forget())
