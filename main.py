@@ -14,8 +14,10 @@ TRANSFER_PORT = 50000
 BUFFER_SIZE = 4 * 1024 * 1024
 files = []
 selected_ip = None
-
 BASE_DIR = utilities.get_download_directory()
+
+# select button
+select_button_click = False
 
 # custom tkinter with drag and drop support
 class CTkDnD(ctk.CTk, TkinterDnD.DnDWrapper):
@@ -255,6 +257,26 @@ def handle_files_selected(selected_files):
         files = selected_files
         update_status_label(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
 
+def on_select_click():
+    global select_button_click
+
+    if not select_button_click:
+        main_frame.pack_forget()
+        extra_buttons_frame.pack(side="bottom", fill="x", pady=(0, 0))
+        select_files_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=(5, 0))
+        select_folder_button.pack(side="left", expand=True, fill="x", padx=(2.5, 2.5), pady=(5, 0))
+        select_text_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=(5, 0))
+        main_frame.pack(fill="both", expand=True, padx=5)
+
+        select_button_click = True
+    else:
+        select_files_button.pack_forget()
+        select_folder_button.pack_forget()
+        select_text_button.pack_forget()
+        extra_buttons_frame.pack_forget()
+
+        select_button_click = False
+
 def on_files_selected():
     files = filedialog.askopenfilenames(title="Select files")
     handle_files_selected(files)
@@ -331,10 +353,10 @@ progress_bar = ctk.CTkProgressBar(info_frame, width=300, progress_color="#0095B0
 progress_bar.set(0)
 
 # frames
-frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#092E3C")
-frame.pack(fill="both", expand=True, padx=5)
+main_frame = ctk.CTkFrame(window, width=490, height=200, fg_color="transparent", border_width=2, border_color="#092E3C")
+main_frame.pack(fill="both", expand=True, padx=5)
 
-devices_frame = ctk.CTkScrollableFrame(frame, fg_color="transparent")
+devices_frame = ctk.CTkScrollableFrame(main_frame, fg_color="transparent")
 devices_frame._scrollbar.configure(width=0)
 devices_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -342,11 +364,17 @@ devices_frame.pack(fill="both", expand=True, padx=5, pady=5)
 buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 buttons_frame.pack(side="bottom", fill="x")
 
-select_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15), command=on_files_selected)
-select_files_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=5)
+select_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15), command=on_select_click)
+select_button.pack(side="left", expand=True, fill="x", padx=(5, 2.5), pady=5)
 
 send_files_button = ctk.CTkButton(buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Send files", font=("Consolas", 15), command=on_send_click)
 send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5)
+
+# extra buttons
+extra_buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
+select_files_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15), command=on_files_selected)
+select_folder_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select folder", font=("Consolas", 15))
+select_text_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select text", font=("Consolas", 15))
 
 center_window()
 threading.Thread(target=send_broadcast, daemon=True).start()
