@@ -13,6 +13,7 @@ device_widgets = {}
 TRANSFER_PORT = 50000
 BUFFER_SIZE = 4 * 1024 * 1024
 files = []
+folder = []
 selected_ip = None
 BASE_DIR = utilities.get_download_directory()
 
@@ -257,6 +258,12 @@ def handle_files_selected(selected_files):
         files = selected_files
         update_status_label(f"{len(files)} file{'s' if len(files) != 1 else ''} selected")
 
+def handle_folder_selected(selected_folder):
+    global folder
+    if selected_folder:
+        folder = selected_folder
+        update_status_label(f"<<{folder}>> selected")
+
 def on_select_click():
     global select_button_click
 
@@ -284,6 +291,10 @@ def on_files_selected():
 def on_files_dropped(event):
     files = window.tk.splitlist(event.data)
     handle_files_selected(files)
+
+def on_folder_selected():
+    folder = filedialog.askdirectory(title="Select folder")
+    handle_folder_selected(folder)
 
 def on_device_add(ip, name):
     def ui():
@@ -373,7 +384,7 @@ send_files_button.pack(side="left", expand=True, fill="x", padx=(2.5, 5), pady=5
 # extra buttons
 extra_buttons_frame = ctk.CTkFrame(window, fg_color="transparent")
 select_files_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select files", font=("Consolas", 15), command=on_files_selected)
-select_folder_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select folder", font=("Consolas", 15))
+select_folder_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select folder", font=("Consolas", 15), command=on_folder_selected)
 select_text_button = ctk.CTkButton(extra_buttons_frame, corner_radius=10, fg_color="#092E3C", hover_color="#0B3A4B", text="Select text", font=("Consolas", 15))
 
 center_window()
