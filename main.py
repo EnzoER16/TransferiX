@@ -7,9 +7,7 @@ def main(page: ft.Page):
 
     async def select_files():
         files = await ft.FilePicker().pick_files(dialog_title="Select files", allow_multiple=True)
-        if files:
-            for file in files:
-                files_selected.append(file.path)
+        files_selected.extend(file.path for file in files)
 
     my_ip = device_info.get_local_ip()
 
