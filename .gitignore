@@ -1,0 +1,4 @@
+.venv
+.flet
+__pycache__
+build
